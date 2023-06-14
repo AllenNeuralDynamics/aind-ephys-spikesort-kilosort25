@@ -36,6 +36,15 @@ data_folder = Path("../data")
 results_folder = Path("../results")
 scratch_folder = Path("../scratch")
 
+if os.getenv("AWS_BATCH_JOB_ID") is not None:
+    print("PIPELINE: setting symlinks for CUDA libraries")
+    src = "/mnt/usr/local/cuda-11.4/targets/x86_64-linux/lib/libcuda.so.1"
+    cuda_libs = [p for p in Path(src).parent.iterdir() if "cuda" in p.name]
+    print(cuda_libs)
+    dst = "/usr/lib/x86_64-linux-gnu/libcuda.so.1"
+    # os.symlink(src, dst)
+
+
 
 if __name__ == "__main__":
     data_processes_folder = results_folder / "data_processes_spikesorting"
