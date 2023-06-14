@@ -96,7 +96,11 @@ if __name__ == "__main__":
                                     verbose=False, delete_output_folder=True, **sorter_params)
         except Exception as e:
             # save log to results
-            sorting_output_folder.mkdir()
+            sorting_output_folder.mkdir(parents=True)
+            # TODO print log
+            with (spikesorted_raw_output_folder / "spikeinterface_log.json", "r") as f:
+                log = json.load(f)
+            print(log)
             shutil.copy(spikesorted_raw_output_folder / "spikeinterface_log.json", sorting_output_folder)
         print(f"\tRaw sorting output: {sorting}")
         n_original_units = int(len(sorting.unit_ids))
