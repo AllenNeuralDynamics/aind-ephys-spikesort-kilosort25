@@ -42,7 +42,7 @@ if os.getenv("AWS_BATCH_JOB_ID") is not None:
     cuda_libs = [p for p in Path(src).parent.iterdir() if "cuda" in p.name]
     print(cuda_libs)
     dst = "/usr/lib/x86_64-linux-gnu/libcuda.so.1"
-    # os.symlink(src, dst)
+    os.symlink(src, dst)
 
 
 
