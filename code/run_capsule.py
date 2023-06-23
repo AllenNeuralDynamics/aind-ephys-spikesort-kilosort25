@@ -58,8 +58,6 @@ if __name__ == "__main__":
     print("\n\nSPIKE SORTING")
     sorting_params = None
 
-    print(f"PyKilosort version: {pykilosort.__version__}")
-
     si.set_global_job_kwargs(**job_kwargs)
     t_sorting_start_all = time.perf_counter()
 
