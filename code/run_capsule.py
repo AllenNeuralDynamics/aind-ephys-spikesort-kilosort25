@@ -19,6 +19,7 @@ import spikeinterface.sorters as ss
 import spikeinterface.curation as sc
 
 # AIND
+from aind_data_schema import Processing
 from aind_data_schema.processing import DataProcess
 
 # LOCAL
@@ -36,51 +37,52 @@ data_folder = Path("../data")
 results_folder = Path("../results")
 scratch_folder = Path("../scratch")
 
+
 if os.getenv("AWS_BATCH_JOB_ID") is not None:
     print("PIPELINE: setting symlinks for CUDA libraries")
-    src = "/mnt/usr/local/cuda-11.4/targets/x86_64-linux/lib/libcuda.so.1"
-    cuda_libs = [p for p in Path(src).parent.iterdir() if "cuda" in p.name]
+    src_folder = Path("/mnt/usr/local/cuda-11.4/targets/x86_64-linux/lib/")
+    dst_folder = Path("/usr/lib/x86_64-linux-gnu/")
+    cuda_libs = [p for p in Path(src).iterdir() if "cuda" in p.name]
     print(cuda_libs)
-    dst = "/usr/lib/x86_64-linux-gnu/libcuda.so.1"
-    os.symlink(src, dst)
-
+    for cuda_lib in cuda_libs:
+        src = str(cuda_lib)
+        dst = str(dst_folder / cuda_lib.name)
+        print(f"Creating symlink {src} --> {dst}")
+        os.symlink(src, dst)
 
 
 if __name__ == "__main__":
-    data_processes_folder = results_folder / "data_processes_spikesorting"
-    data_processes_folder.mkdir(exist_ok=True, parents=True)
+    data_process_prefix = "data_process_spikesorting"
 
     ####### SPIKESORTING ########
     print("\n\nSPIKE SORTING")
     sorting_params = None
 
+    print(f"PyKilosort version: {pykilosort.__version__}")
+
     si.set_global_job_kwargs(**job_kwargs)
     t_sorting_start_all = time.perf_counter()
 
     # check if test
-    if (data_folder / "preprocessing_output_test").is_dir():
+    if (data_folder / "preprocessing_pipeline_output_test").is_dir():
         print("\n*******************\n**** TEST MODE ****\n*******************\n")
-        preprocessed_folder = data_folder / "preprocessing_output_test" / "preprocessed"
+        preprocessed_folder = data_folder / "preprocessing_pipeline_output_test"
     else:
-        preprocessed_folder = data_folder / "preprocessed"
+        preprocessed_folder = data_folder
 
     # try results here
     spikesorted_raw_output_folder = scratch_folder / "spikesorted_raw"
     spikesorting_data_processes = []
 
-    if not preprocessed_folder.is_dir():
-        print("'preprocessed' folder not found. Exiting")
-        sys.exit(1)
-
-    preprocessed_recording_folders = [p for p in preprocessed_folder.iterdir() if p.is_dir()]
-    for recording_folder in preprocessed_recording_folders:
+    preprocessed_folders = [p for p in preprocessed_folder.iterdir() if p.is_dir() and "preprocessed_" in p.name]
+    for recording_folder in preprocessed_folders:
         datetime_start_sorting = datetime.now()
         t_sorting_start = time.perf_counter()
         spikesorting_notes = ""
 
-        recording_name = recording_folder.name
-        sorting_output_folder = results_folder / "spikesorted" / recording_name
-        sorting_output_process_json = data_processes_folder / f"spikesorting_{recording_name}.json"
+        recording_name = ("_").join(recording_folder.name.split("_")[1:])
+        sorting_output_folder = results_folder / f"spikesorted_{recording_name}"
+        sorting_output_process_json = results_folder / f"{data_process_prefix}_{recording_name}.json"
 
         print(f"Sorting recording: {recording_name}")
         recording = si.load_extractor(recording_folder)
@@ -96,11 +98,7 @@ if __name__ == "__main__":
                                     verbose=False, delete_output_folder=True, **sorter_params)
         except Exception as e:
             # save log to results
-            sorting_output_folder.mkdir(parents=True)
-            # TODO print log
-            with (spikesorted_raw_output_folder / "spikeinterface_log.json", "r") as f:
-                log = json.load(f)
-            print(log)
+            sorting_output_folder.mkdir()
             shutil.copy(spikesorted_raw_output_folder / "spikeinterface_log.json", sorting_output_folder)
         print(f"\tRaw sorting output: {sorting}")
         n_original_units = int(len(sorting.unit_ids))
@@ -151,6 +149,3 @@ if __name__ == "__main__":
     t_sorting_end_all = time.perf_counter()
     elapsed_time_sorting_all = np.round(t_sorting_end_all - t_sorting_start_all, 2)
     print(f"SPIKE SORTING time: {elapsed_time_sorting_all}s")
-
-
-
