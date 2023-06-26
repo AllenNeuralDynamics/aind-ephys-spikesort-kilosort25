@@ -96,7 +96,7 @@ if __name__ == "__main__":
                                     verbose=False, delete_output_folder=True, **sorter_params)
         except Exception as e:
             # save log to results
-            sorting_output_folder.mkdir()
+            (sorting_output_folder / recording_name).mkdir(parents=True, exist_ok=True)
             shutil.copy(spikesorted_raw_output_folder  / recording_name / "spikeinterface_log.json", sorting_output_folder / recording_name)
             with open(sorting_output_folder / recording_name / "spikeinterface_log.json", "r") as f:
                 log = json.load(f)
