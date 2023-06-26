@@ -10,6 +10,7 @@ import shutil
 import json
 import sys
 import time
+from pprint import pprint
 from datetime import datetime, timedelta
 
 # SPIKEINTERFACE
@@ -97,7 +98,10 @@ if __name__ == "__main__":
         except Exception as e:
             # save log to results
             sorting_output_folder.mkdir()
-            shutil.copy(spikesorted_raw_output_folder / "spikeinterface_log.json", sorting_output_folder)
+            shutil.copy(spikesorted_raw_output_folder  / recording_name / "spikeinterface_log.json", sorting_output_folder / recording_name)
+            with (sorting_output_folder / recording_name / "spikeinterface_log.json", "r") as f:
+                log = json.load(f)
+            pprint(log)
         print(f"\tRaw sorting output: {sorting}")
         n_original_units = int(len(sorting.unit_ids))
         spikesorting_notes += f"\n- KS2.5 found {n_original_units} units, "
