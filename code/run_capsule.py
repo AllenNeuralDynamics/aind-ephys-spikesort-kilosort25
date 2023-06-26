@@ -99,6 +99,32 @@ if __name__ == "__main__":
         try:
             sorting = ss.run_sorter(sorter_name, recording, output_folder=spikesorted_raw_output_folder / recording_name,
                                     verbose=False, delete_output_folder=True, **sorter_params)
+            print(f"\tRaw sorting output: {sorting}")
+            n_original_units = int(len(sorting.unit_ids))
+            spikesorting_notes += f"\n- KS2.5 found {n_original_units} units, "
+            if sorting_params is None:
+                sorting_params = sorting.sorting_info["params"]
+
+            # remove empty units
+            sorting = sorting.remove_empty_units()
+            # remove spikes beyond num_Samples (if any)
+            sorting = sc.remove_excess_spikes(sorting=sorting, recording=recording)
+            n_non_empty_units = int(len(sorting.unit_ids))
+            n_empty_units = n_original_units - n_non_empty_units
+            # save params in output
+            sorting_outputs = dict(
+                empty_units=n_empty_units
+            )
+            print(f"\tSorting output without empty units: {sorting}")
+            spikesorting_notes += f"{len(sorting.unit_ids)} after removing empty templates.\n"
+            
+            # split back to get original segments
+            if recording.get_num_segments() > 1:
+                sorting = si.split_sorting(sorting, recording)
+
+            # save results 
+            print(f"\tSaving results to {sorting_output_folder}")
+            sorting = sorting.save(folder=sorting_output_folder)
         except Exception as e:
             # save log to results
             (sorting_output_folder / recording_name).mkdir(parents=True, exist_ok=True)
@@ -106,37 +132,11 @@ if __name__ == "__main__":
             with open(sorting_output_folder / recording_name / "spikeinterface_log.json", "r") as f:
                 log = json.load(f)
             pprint(log)
-        print(f"\tRaw sorting output: {sorting}")
-        n_original_units = int(len(sorting.unit_ids))
-        spikesorting_notes += f"\n- KS2.5 found {n_original_units} units, "
-        if sorting_params is None:
-            sorting_params = sorting.sorting_info["params"]
-
-        # remove empty units
-        sorting = sorting.remove_empty_units()
-        # remove spikes beyond num_Samples (if any)
-        sorting = sc.remove_excess_spikes(sorting=sorting, recording=recording)
-        n_non_empty_units = int(len(sorting.unit_ids))
-        n_empty_units = n_original_units - n_non_empty_units
-
-        print(f"\tSorting output without empty units: {sorting}")
-        spikesorting_notes += f"{len(sorting.unit_ids)} after removing empty templates.\n"
-        
-        # split back to get original segments
-        if recording.get_num_segments() > 1:
-            sorting = si.split_sorting(sorting, recording)
-
-        # save results 
-        print(f"\tSaving results to {sorting_output_folder}")
-        sorting = sorting.save(folder=sorting_output_folder)
+            sorting_outputs = dict()
 
         t_sorting_end = time.perf_counter()
         elapsed_time_sorting = np.round(t_sorting_end - t_sorting_start, 2)
-    
-        # save params in output
-        sorting_outputs = dict(
-            empty_units=n_empty_units
-        )
+
         spikesorting_process = DataProcess(
                 name="Spike sorting",
                 version=VERSION, # either release or git commit
