@@ -2,4 +2,10 @@
 set -e
 
 # install spikeinterface
-pip install -U --no-cache-dir spikeinterface[full]==0.97.1
+# pip install -U --no-cache-dir spikeinterface[full]==0.97.1
+
+git clone https://github.com/alejoe91/spikeinterface.git
+cd spikeinterface
+git checkout runtime-trace
+pip  install --no-cache-dir .[full]
+cd ..

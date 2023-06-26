@@ -125,10 +125,11 @@ if __name__ == "__main__":
             # save results 
             print(f"\tSaving results to {sorting_output_folder}")
             sorting = sorting.save(folder=sorting_output_folder)
+            shutil.copy(spikesorted_raw_output_folder  / recording_name / "spikeinterface_log.json", sorting_output_folder)
         except Exception as e:
             # save log to results
-            (sorting_output_folder / recording_name).mkdir(parents=True, exist_ok=True)
-            shutil.copy(spikesorted_raw_output_folder  / recording_name / "spikeinterface_log.json", sorting_output_folder / recording_name)
+            (sorting_output_folder).mkdir(parents=True, exist_ok=True)
+            shutil.copy(spikesorted_raw_output_folder  / recording_name / "spikeinterface_log.json", sorting_output_folder)
             with open(sorting_output_folder / recording_name / "spikeinterface_log.json", "r") as f:
                 log = json.load(f)
             pprint(log)
