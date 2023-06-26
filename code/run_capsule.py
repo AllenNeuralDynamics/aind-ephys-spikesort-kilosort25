@@ -42,13 +42,18 @@ if os.getenv("AWS_BATCH_JOB_ID") is not None:
     print("PIPELINE: setting symlinks for CUDA libraries")
     src_folder = Path("/mnt/usr/local/cuda-11.4/targets/x86_64-linux/lib/")
     dst_folder = Path("/usr/lib/x86_64-linux-gnu/")
-    cuda_libs = [p for p in Path(src_folder).iterdir() if "cuda" in p.name]
-    print(f"Cuda libraries: {cuda_libs}")
-    for cuda_lib in cuda_libs:
+    cuda_libs_mnt = [p for p in Path(src_folder).iterdir() if "cuda" in p.name]
+    cuda_libs_usr = [p for p in Path(dst_folder).iterdir() if "cuda" in p.name]
+
+    print(f"Cuda libraries in {src_folder}: {cuda_libs_mnt}")
+    print(f"Cuda libraries in {dst_folder}: {cuda_libs_usr}")
+
+    for cuda_lib in cuda_libs_mnt:
         src = str(cuda_lib)
         dst = str(dst_folder / cuda_lib.name)
-        print(f"Creating symlink {src} --> {dst}")
-        os.symlink(src, dst)
+        if not dst.exists():
+            print(f"Creating symlink {src} --> {dst}")
+            os.symlink(src, dst)
 
 
 if __name__ == "__main__":
