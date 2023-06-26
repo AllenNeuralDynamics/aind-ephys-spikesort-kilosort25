@@ -51,7 +51,7 @@ if os.getenv("AWS_BATCH_JOB_ID") is not None:
     for cuda_lib in cuda_libs_mnt:
         src = str(cuda_lib)
         dst = str(dst_folder / cuda_lib.name)
-        if not dst.exists():
+        if not Path(dst).exists():
             print(f"Creating symlink {src} --> {dst}")
             os.symlink(src, dst)
 
