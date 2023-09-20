@@ -1,4 +1,4 @@
-# Spike sort with Kilosort2.5 for AIND ephys pipeline
+# Spike sorting with Kilosort2.5 for AIND ephys pipeline
 ## aind-capsule-ephys-spikesort-kilosort25
 
 
