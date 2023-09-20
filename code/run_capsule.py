@@ -8,7 +8,6 @@ import numpy as np
 from pathlib import Path
 import shutil
 import json
-import sys
 import time
 from pprint import pprint
 from datetime import datetime, timedelta
