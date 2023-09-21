@@ -1,5 +1,5 @@
 # Spike sorting with Kilosort2.5 for AIND ephys pipeline
-## aind-capsule-ephys-spikesort-kilosort25
+## aind-ephys-spikesort-kilosort25
 
 
 ### Description
@@ -14,7 +14,7 @@ This capsule spike sorts preprocessed ephys stream and applies a minimal curatio
 
 ### Inputs
 
-The `data/` folder must include the output of the [aind-capsule-ephys-preprocessing](https://github.com/AllenNeuralDynamics/aind-capsule-ephys-preprocessing), containing 
+The `data/` folder must include the output of the [aind-ephys-preprocessing](https://github.com/AllenNeuralDynamics/aind-ephys-preprocessing), containing 
 the `data/preprocessed_{recording_name}` folder.
 
 ### Parameters
