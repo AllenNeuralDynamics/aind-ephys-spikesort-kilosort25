@@ -14,7 +14,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip install -U --no-cache-dir \
-    aind-data-schema==0.13.50
+    aind-data-schema==0.15.25
 
 COPY postInstall /
 RUN /postInstall
