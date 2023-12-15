@@ -122,7 +122,7 @@ if __name__ == "__main__":
 
         spikesorting_process = DataProcess(
                 name="Spike sorting",
-                version=VERSION, # either release or git commit
+                software_version=VERSION, # either release or git commit
                 start_date_time=datetime_start_sorting,
                 end_date_time=datetime_start_sorting + timedelta(seconds=np.floor(elapsed_time_sorting)),
                 input_location=str(data_folder),
