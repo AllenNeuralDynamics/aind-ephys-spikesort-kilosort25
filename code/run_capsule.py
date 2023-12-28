@@ -1,4 +1,5 @@
 import warnings
+
 warnings.filterwarnings("ignore")
 warnings.filterwarnings("ignore", category=DeprecationWarning)
 
@@ -19,7 +20,7 @@ import spikeinterface.sorters as ss
 import spikeinterface.curation as sc
 
 # AIND
-from aind_data_schema.processing import DataProcess
+from aind_data_schema.core.processing import DataProcess
 
 # LOCAL
 URL = "https://github.com/AllenNeuralDynamics/aind-capsule-ephys-spikesort-kilosort25"
@@ -71,15 +72,21 @@ if __name__ == "__main__":
         print(f"Sorting recording: {recording_name}")
         recording = si.load_extractor(recording_folder)
         print(recording)
-        
+
         # we need to concatenate segments for KS
         if recording.get_num_segments() > 1:
             recording = si.concatenate_recordings([recording])
 
         # run ks2.5
         try:
-            sorting = ss.run_sorter(sorter_name, recording, output_folder=spikesorted_raw_output_folder / recording_name,
-                                    verbose=False, delete_output_folder=True, **sorter_params)
+            sorting = ss.run_sorter(
+                sorter_name,
+                recording,
+                output_folder=spikesorted_raw_output_folder / recording_name,
+                verbose=False,
+                delete_output_folder=True,
+                **sorter_params,
+            )
             print(f"\tRaw sorting output: {sorting}")
             n_original_units = int(len(sorting.unit_ids))
             spikesorting_notes += f"\n- KS2.5 found {n_original_units} units, "
@@ -93,24 +100,26 @@ if __name__ == "__main__":
             n_non_empty_units = int(len(sorting.unit_ids))
             n_empty_units = n_original_units - n_non_empty_units
             # save params in output
-            sorting_outputs = dict(
-                empty_units=n_empty_units
-            )
+            sorting_outputs = dict(empty_units=n_empty_units)
             print(f"\tSorting output without empty units: {sorting}")
             spikesorting_notes += f"{len(sorting.unit_ids)} after removing empty templates.\n"
-            
+
             # split back to get original segments
             if recording.get_num_segments() > 1:
                 sorting = si.split_sorting(sorting, recording)
 
-            # save results 
+            # save results
             print(f"\tSaving results to {sorting_output_folder}")
             sorting = sorting.save(folder=sorting_output_folder)
-            shutil.copy(spikesorted_raw_output_folder  / recording_name / "spikeinterface_log.json", sorting_output_folder)
+            shutil.copy(
+                spikesorted_raw_output_folder / recording_name / "spikeinterface_log.json", sorting_output_folder
+            )
         except Exception as e:
             # save log to results
             (sorting_output_folder).mkdir(parents=True, exist_ok=True)
-            shutil.copy(spikesorted_raw_output_folder  / recording_name / "spikeinterface_log.json", sorting_output_folder)
+            shutil.copy(
+                spikesorted_raw_output_folder / recording_name / "spikeinterface_log.json", sorting_output_folder
+            )
             with open(sorting_output_folder / "spikeinterface_log.json", "r") as f:
                 log = json.load(f)
             pprint(log)
@@ -120,19 +129,19 @@ if __name__ == "__main__":
         elapsed_time_sorting = np.round(t_sorting_end - t_sorting_start, 2)
 
         spikesorting_process = DataProcess(
-                name="Spike sorting",
-                software_version=VERSION, # either release or git commit
-                start_date_time=datetime_start_sorting,
-                end_date_time=datetime_start_sorting + timedelta(seconds=np.floor(elapsed_time_sorting)),
-                input_location=str(data_folder),
-                output_location=str(results_folder),
-                code_url=URL,
-                parameters=sorting_params,
-                outputs=sorting_outputs,
-                notes=spikesorting_notes
-            )
+            name="Spike sorting",
+            software_version=VERSION,  # either release or git commit
+            start_date_time=datetime_start_sorting,
+            end_date_time=datetime_start_sorting + timedelta(seconds=np.floor(elapsed_time_sorting)),
+            input_location=str(data_folder),
+            output_location=str(results_folder),
+            code_url=URL,
+            parameters=sorting_params,
+            outputs=sorting_outputs,
+            notes=spikesorting_notes,
+        )
         with open(sorting_output_process_json, "w") as f:
-            f.write(spikesorting_process.json(indent=3))
+            f.write(spikesorting_process.model_dump_json(indent=3))
 
     t_sorting_end_all = time.perf_counter()
     elapsed_time_sorting_all = np.round(t_sorting_end_all - t_sorting_start_all, 2)
