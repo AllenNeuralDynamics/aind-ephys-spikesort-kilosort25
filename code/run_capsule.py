@@ -19,7 +19,6 @@ import spikeinterface.sorters as ss
 import spikeinterface.curation as sc
 
 # AIND
-from aind_data_schema import Processing
 from aind_data_schema.processing import DataProcess
 
 # LOCAL
