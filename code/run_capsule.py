@@ -124,6 +124,7 @@ if __name__ == "__main__":
                 log = json.load(f)
             pprint(log)
             sorting_outputs = dict()
+            sorting_params = dict()
 
         t_sorting_end = time.perf_counter()
         elapsed_time_sorting = np.round(t_sorting_end - t_sorting_start, 2)
