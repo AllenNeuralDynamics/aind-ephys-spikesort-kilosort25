@@ -9,7 +9,5 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip install -U --no-cache-dir \
-    aind-data-schema==0.15.25
-
-COPY postInstall /
-RUN /postInstall
+    aind-data-schema==0.22.1 \
+    spikeinterface[full]==0.99.1
