@@ -122,6 +122,7 @@ if __name__ == "__main__":
             )
             with open(sorting_output_folder / "spikeinterface_log.json", "r") as f:
                 log = json.load(f)
+            print("\n\tSPIKE SORTING FAILED!\nError log:\n")
             pprint(log)
             sorting_outputs = dict()
             sorting_params = dict()
