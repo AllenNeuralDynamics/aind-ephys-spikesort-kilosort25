@@ -5,6 +5,7 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 # GENERAL IMPORTS
 import os
+import argparse
 import numpy as np
 from pathlib import Path
 import shutil
@@ -26,20 +27,61 @@ from aind_data_schema.core.processing import DataProcess
 URL = "https://github.com/AllenNeuralDynamics/aind-capsule-ephys-spikesort-kilosort25"
 VERSION = "0.1.0"
 
-### PARAMS ###
-n_jobs = os.cpu_count()
-job_kwargs = dict(n_jobs=n_jobs, chunk_duration="1s", progress_bar=False)
-
-sorter_name = "kilosort2_5"
-sorter_params = dict()
+SORTER_NAME = "kilosort2_5"
 
 data_folder = Path("../data")
 results_folder = Path("../results")
 scratch_folder = Path("../scratch")
 
+# Define argument parser
+parser = argparse.ArgumentParser(description="Spike sort ecephys data with Kilosort2.5")
+
+n_jobs_group = parser.add_mutually_exclusive_group()
+n_jobs_help = (
+    "Duration of clipped recording in debug mode. Default is 30 seconds. Only used if debug is enabled"
+)
+n_jobs_help = (
+    "Number of jobs to use for parallel processing. Default is -1 (all available cores). "
+    "It can also be a float between 0 and 1 to use a fraction of available cores"
+)
+n_jobs_group.add_argument("static_n_jobs", nargs="?", default="-1", help=n_jobs_help)
+n_jobs_group.add_argument("--n-jobs", default="-1", help=n_jobs_help)
+
+params_group = parser.add_mutually_exclusive_group()
+params_file_help = "Optional json file with parameters"
+params_group.add_argument("static_params_file", nargs="?", default=None, help=params_file_help)
+params_group.add_argument("--params-file", default=None, help=params_file_help)
+params_group.add_argument("--params-str", default=None, help="Optional json string with parameters")
 
 if __name__ == "__main__":
+    args = parser.parse_args()
+
+    N_JOBS = args.static_n_jobs or args.n_jobs
+    N_JOBS = int(N_JOBS) if not N_JOBS.startswith("0.") else float(N_JOBS)
+    PARAMS_FILE = args.static_params_file or args.params_file
+    PARAMS_STR = args.params_str
+
+    # Use CO_CPUS env variable if available
+    N_JOBS_CO = os.getenv("CO_CPUS")
+    N_JOBS = int(N_JOBS_CO) if N_JOBS_CO is not None else N_JOBS
+
+    if PARAMS_FILE is not None:
+        print(f"\nUsing custom parameter file: {PARAMS_FILE}")
+        with open(PARAMS_FILE, "r") as f:
+            processing_params = json.load(f)
+    elif PARAMS_STR is not None:
+        processing_params = json.loads(PARAMS_STR)
+    else:
+        with open("params.json", "r") as f:
+            processing_params = json.load(f)
+
     data_process_prefix = "data_process_spikesorting"
+
+    job_kwargs = processing_params["job_kwargs"]
+    job_kwargs["n_jobs"] = N_JOBS
+    si.set_global_job_kwargs(**job_kwargs)
+
+    sorter_params = processing_params["sorter"]
 
     ####### SPIKESORTING ########
     print("\n\nSPIKE SORTING")
@@ -80,7 +122,7 @@ if __name__ == "__main__":
         # run ks2.5
         try:
             sorting = ss.run_sorter(
-                sorter_name,
+                SORTER_NAME,
                 recording,
                 output_folder=spikesorted_raw_output_folder / recording_name,
                 verbose=False,
