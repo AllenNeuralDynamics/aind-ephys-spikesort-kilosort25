@@ -37,9 +37,7 @@ scratch_folder = Path("../scratch")
 parser = argparse.ArgumentParser(description="Spike sort ecephys data with Kilosort2.5")
 
 n_jobs_group = parser.add_mutually_exclusive_group()
-n_jobs_help = (
-    "Duration of clipped recording in debug mode. Default is 30 seconds. Only used if debug is enabled"
-)
+n_jobs_help = "Duration of clipped recording in debug mode. Default is 30 seconds. Only used if debug is enabled"
 n_jobs_help = (
     "Number of jobs to use for parallel processing. Default is -1 (all available cores). "
     "It can also be a float between 0 and 1 to use a fraction of available cores"
