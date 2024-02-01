@@ -24,7 +24,7 @@ import spikeinterface.curation as sc
 from aind_data_schema.core.processing import DataProcess
 
 # LOCAL
-URL = "https://github.com/AllenNeuralDynamics/aind-capsule-ephys-spikesort-kilosort25"
+URL = "https://github.com/AllenNeuralDynamics/aind-ephys-spikesort-kilosort25"
 VERSION = "0.1.0"
 
 SORTER_NAME = "kilosort2_5"
