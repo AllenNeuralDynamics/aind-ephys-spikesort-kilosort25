@@ -1,4 +1,4 @@
-# hash:sha256:4340e0412522774da98cc81eefc63f384cd55431eae0874beb2f8dad14de15d5
+# hash:sha256:142298e43998de6a2752a247c65416efda89bb69dfbe2ea16e43e4bc65b264ac
 FROM registry.codeocean.allenneuraldynamics.org/codeocean/kilosort2_5-compiled-base:latest
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -9,4 +9,7 @@ COPY git-askpass /
 
 RUN pip install -U --no-cache-dir \
     aind-data-schema==0.19.1 \
-    spikeinterface[full]==0.99.1
+    spikeinterface[full]==0.100.0
+
+COPY postInstall /
+RUN /postInstall
