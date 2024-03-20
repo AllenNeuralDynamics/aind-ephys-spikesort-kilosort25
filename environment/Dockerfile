@@ -1,6 +1,6 @@
-# hash:sha256:c557263f1d1ec0ba93504ddb60334353802bb5b30f5bfcc610c6b9e519e874dc
+# hash:sha256:96dd4019dac9fb1e1c3bdbe62725796a1e47c4b37259f76d0e24a10eb90de9a4
 ARG REGISTRY_HOST
-FROM $REGISTRY_HOST/codeocean/kilosort2_5-compiled-base:0.3.0
+FROM $REGISTRY_HOST/codeocean/kilosort2_5-compiled-base:0.2.0
 
 ARG DEBIAN_FRONTEND=noninteractive
 
