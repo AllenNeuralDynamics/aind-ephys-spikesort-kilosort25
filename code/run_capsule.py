@@ -28,6 +28,7 @@ URL = "https://github.com/AllenNeuralDynamics/aind-ephys-spikesort-kilosort25"
 VERSION = "0.1.0"
 
 SORTER_NAME = "kilosort2_5"
+MIN_CHANNELS_FOR_DRIFT = 128
 
 data_folder = Path("../data")
 results_folder = Path("../results")
@@ -116,6 +117,9 @@ if __name__ == "__main__":
         # we need to concatenate segments for KS
         if recording.get_num_segments() > 1:
             recording = si.concatenate_recordings([recording])
+
+        if recording.get_num_channels() < MIN_CHANNELS_FOR_DRIFT:
+            sorter_params["do_correction"] = False
 
         # run ks2.5
         try:
