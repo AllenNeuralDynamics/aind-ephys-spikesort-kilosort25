@@ -1,5 +1,5 @@
 metadata_version: 1
-name: Spikesort Kilosort2.5 Ecephys
+name: Spikesort Kilosort2.5 Ecephys (analyzer)
 description: |-
   This capsule is designed to spike sort ephys data using Kilosort2.5 for the AIND pipeline.
 
