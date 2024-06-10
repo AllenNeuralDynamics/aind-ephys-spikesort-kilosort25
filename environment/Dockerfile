@@ -1,4 +1,4 @@
-# hash:sha256:96dd4019dac9fb1e1c3bdbe62725796a1e47c4b37259f76d0e24a10eb90de9a4
+# hash:sha256:e93837b1d4de4f208f6ebb18a8d1337b51c7cc8f28f673861a3fa1992f2bb086
 ARG REGISTRY_HOST
 FROM $REGISTRY_HOST/codeocean/kilosort2_5-compiled-base:0.2.0
 
@@ -10,4 +10,4 @@ COPY git-askpass /
 
 RUN pip install -U --no-cache-dir \
     aind-data-schema==0.19.1 \
-    spikeinterface[full]==0.100.0
+    spikeinterface[full]==0.100.7
