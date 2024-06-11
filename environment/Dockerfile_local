@@ -3,5 +3,5 @@ FROM spikeinterface/kilosort2_5-compiled-base:latest
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN pip install -U --no-cache-dir \
-    aind-data-schema==0.19.1 \
-    spikeinterface[full]==0.100.0
+    aind-data-schema==0.38.0 \
+    spikeinterface[full]==0.100.7
