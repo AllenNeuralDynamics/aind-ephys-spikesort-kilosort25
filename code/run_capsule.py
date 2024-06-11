@@ -28,7 +28,6 @@ URL = "https://github.com/AllenNeuralDynamics/aind-ephys-spikesort-kilosort25"
 VERSION = "0.1.0"
 
 SORTER_NAME = "kilosort2_5"
-MIN_CHANNELS_FOR_DRIFT = 128
 
 data_folder = Path("../data")
 results_folder = Path("../results")
@@ -38,13 +37,19 @@ scratch_folder = Path("../scratch")
 parser = argparse.ArgumentParser(description="Spike sort ecephys data with Kilosort2.5")
 
 n_jobs_group = parser.add_mutually_exclusive_group()
-n_jobs_help = "Duration of clipped recording in debug mode. Default is 30 seconds. Only used if debug is enabled"
 n_jobs_help = (
     "Number of jobs to use for parallel processing. Default is -1 (all available cores). "
     "It can also be a float between 0 and 1 to use a fraction of available cores"
 )
 n_jobs_group.add_argument("static_n_jobs", nargs="?", default="-1", help=n_jobs_help)
 n_jobs_group.add_argument("--n-jobs", default="-1", help=n_jobs_help)
+
+min_drift_channels_group = parser.add_mutually_exclusive_group()
+min_drift_channels_help = (
+    "Minimum number of channels to enable Kilosort motion correction. Default is 96."
+)
+min_drift_channels_group.add_argument("static_min_channels_for_drift", nargs="?", default="-1", help=min_drift_channels_help)
+min_drift_channels_group.add_argument("--min-drift-channels", default="96", help=min_drift_channels_help)
 
 params_group = parser.add_mutually_exclusive_group()
 params_file_help = "Optional json file with parameters"
@@ -57,6 +62,7 @@ if __name__ == "__main__":
 
     N_JOBS = args.static_n_jobs or args.n_jobs
     N_JOBS = int(N_JOBS) if not N_JOBS.startswith("0.") else float(N_JOBS)
+    MIN_DRIFT_CHANNELS = args.static_min_channels_for_drift or args.min_drift_channels
     PARAMS_FILE = args.static_params_file or args.params_file
     PARAMS_STR = args.params_str
 
@@ -118,7 +124,7 @@ if __name__ == "__main__":
         if recording.get_num_segments() > 1:
             recording = si.concatenate_recordings([recording])
 
-        if recording.get_num_channels() < MIN_CHANNELS_FOR_DRIFT:
+        if recording.get_num_channels() < MIN_DRIFT_CHANNELS:
             sorter_params["do_correction"] = False
 
         # run ks2.5
