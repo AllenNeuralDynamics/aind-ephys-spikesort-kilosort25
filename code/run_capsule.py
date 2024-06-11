@@ -63,6 +63,7 @@ if __name__ == "__main__":
     N_JOBS = args.static_n_jobs or args.n_jobs
     N_JOBS = int(N_JOBS) if not N_JOBS.startswith("0.") else float(N_JOBS)
     MIN_DRIFT_CHANNELS = args.static_min_channels_for_drift or args.min_drift_channels
+    MIN_DRIFT_CHANNELS = int(MIN_DRIFT_CHANNELS)
     PARAMS_FILE = args.static_params_file or args.params_file
     PARAMS_STR = args.params_str
 
