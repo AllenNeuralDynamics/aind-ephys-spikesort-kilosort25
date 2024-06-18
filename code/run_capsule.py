@@ -48,7 +48,7 @@ min_drift_channels_group = parser.add_mutually_exclusive_group()
 min_drift_channels_help = (
     "Minimum number of channels to enable Kilosort motion correction. Default is 96."
 )
-min_drift_channels_group.add_argument("static_min_channels_for_drift", nargs="?", default="-1", help=min_drift_channels_help)
+min_drift_channels_group.add_argument("static_min_channels_for_drift", nargs="?", help=min_drift_channels_help)
 min_drift_channels_group.add_argument("--min-drift-channels", default="96", help=min_drift_channels_help)
 
 params_group = parser.add_mutually_exclusive_group()
@@ -122,7 +122,7 @@ if __name__ == "__main__":
             recording = si.load_extractor(recording_folder)
             print(recording)
         except ValueError as e:
-            print(f"Skippin spike sorting for {recording_name}.")
+            print(f"Skipping spike sorting for {recording_name}.")
             # create an empty result file (needed for pipeline)
             sorting_output_folder.mkdir(parents=True, exist_ok=True)
             error_file = sorting_output_folder / "error.txt"
@@ -134,6 +134,7 @@ if __name__ == "__main__":
             recording = si.concatenate_recordings([recording])
 
         if recording.get_num_channels() < MIN_DRIFT_CHANNELS:
+            print("Drift correction not enabled due to low number of channels")
             sorter_params["do_correction"] = False
 
         # run ks2.5
