@@ -122,7 +122,7 @@ if __name__ == "__main__":
             recording = si.load_extractor(recording_folder)
             print(recording)
         except ValueError as e:
-            print(f"Skippin spike sorting for {recording_name}.")
+            print(f"Skipping spike sorting for {recording_name}.")
             # create an empty result file (needed for pipeline)
             sorting_output_folder.mkdir(parents=True, exist_ok=True)
             error_file = sorting_output_folder / "error.txt"
@@ -133,7 +133,9 @@ if __name__ == "__main__":
         if recording.get_num_segments() > 1:
             recording = si.concatenate_recordings([recording])
 
+        print(recording.get_num_channels(), MIN_DRIFT_CHANNELS)
         if recording.get_num_channels() < MIN_DRIFT_CHANNELS:
+            print("Drift correction disabled (too few channels)")
             sorter_params["do_correction"] = False
 
         # run ks2.5
