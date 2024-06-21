@@ -114,12 +114,17 @@ if __name__ == "__main__":
         spikesorting_notes = ""
 
         recording_name = ("_").join(recording_folder.name.split("_")[1:])
+        binary_json_file = preprocessed_folder / f"binary_{recording_name}.json"
         sorting_output_folder = results_folder / f"spikesorted_{recording_name}"
         sorting_output_process_json = results_folder / f"{data_process_prefix}_{recording_name}.json"
 
         print(f"Sorting recording: {recording_name}")
         try:
-            recording = si.load_extractor(recording_folder)
+            if binary_json_file.is_file():
+                print(f"Loading recording from binary JSON")
+                recording = si.load_extractor(binary_json_file, base_folder=preprocessed_folder)
+            else:
+                recording = si.load_extractor(recording_folder)
             print(recording)
         except ValueError as e:
             print(f"Skipping spike sorting for {recording_name}.")
