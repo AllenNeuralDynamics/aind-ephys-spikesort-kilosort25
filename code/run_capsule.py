@@ -144,12 +144,6 @@ if __name__ == "__main__":
             error_file.write_text("Too many bad channels")
             continue
 
-        # we need to concatenate segments for KS
-        split_segments = False
-        if recording.get_num_segments() > 1:
-            recording = si.concatenate_recordings([recording])
-            split_segments = True
-
         if recording.get_num_channels() < MIN_DRIFT_CHANNELS:
             print("Drift correction not enabled due to low number of channels")
             sorter_params["do_correction"] = False
@@ -157,6 +151,13 @@ if __name__ == "__main__":
         if not APPLY_MOTION_CORRECTION:
             print("Drift correction disabled")
             sorter_params["do_correction"] = False
+
+        # we need to concatenate segments for KS
+        split_segments = False
+        if recording.get_num_segments() > 1:
+            print("Concatenating multi-segment recording")
+            recording = si.concatenate_recordings([recording])
+            split_segments = True
 
         # run ks2.5
         try:
@@ -187,6 +188,7 @@ if __name__ == "__main__":
 
             # split back to get original segments
             if split_segments:
+                print("Splitting sorting into multiple segments")
                 sorting = si.split_sorting(sorting, recording)
 
             # save results
