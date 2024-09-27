@@ -51,7 +51,7 @@ min_drift_channels_group.add_argument("--min-drift-channels", default="96", help
 raise_if_fails_group = parser.add_mutually_exclusive_group()
 raise_if_fails_help = "Whether to raise an error in case of failure or continue. Default True (raise)"
 raise_if_fails_group.add_argument("--raise-if-fails", action="store_true", help=raise_if_fails_help)
-raise_if_fails_group.add_argument("static_raise_if_Fails", nargs="?", default="true", help=raise_if_fails_help)
+raise_if_fails_group.add_argument("static_raise_if_fails", nargs="?", default="true", help=raise_if_fails_help)
 
 n_jobs_group = parser.add_mutually_exclusive_group()
 n_jobs_help = (
@@ -102,7 +102,13 @@ if __name__ == "__main__":
     sorter_params = processing_params["sorter"]
 
     ####### SPIKESORTING ########
-    print("\n\nSPIKE SORTING")
+    print(f"\n\nSPIKE SORTING WITH {SORTER_NAME.upper()}\n")
+
+    print(f"\tAPPLY_MOTION_CORRECTION: {APPLY_MOTION_CORRECTION}")
+    print(f"\tMIN_DRIFT_CHANNELS: {MIN_DRIFT_CHANNELS}")
+    print(f"\tRAISE_IF_FAILS: {RAISE_IF_FAILS}")
+    print(f"\tN_JOBS: {N_JOBS}")
+
     sorting_params = None
 
     si.set_global_job_kwargs(**job_kwargs)
