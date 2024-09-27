@@ -36,6 +36,11 @@ scratch_folder = Path("../scratch")
 # Define argument parser
 parser = argparse.ArgumentParser(description="Spike sort ecephys data with Kilosort2.5")
 
+raise_if_fails_group = parser.add_mutually_exclusive_group()
+raise_if_fails_help = "Whether to raise an error in case of failure or continue. Default True (raise)"
+raise_if_fails_group.add_argument("--raise-if-fails", action="store_true", help=raise_if_fails_help)
+raise_if_fails_group.add_argument("static_raise_if_fails", nargs="?", default="true", help=raise_if_fails_help)
+
 apply_motion_correction_group = parser.add_mutually_exclusive_group()
 apply_motion_correction_help = "Whether to apply Kilosort motion correction. Default: True"
 apply_motion_correction_group.add_argument("--apply-motion-correction", action="store_true", help=apply_motion_correction_help)
@@ -47,11 +52,6 @@ min_drift_channels_help = (
 )
 min_drift_channels_group.add_argument("static_min_channels_for_drift", nargs="?", help=min_drift_channels_help)
 min_drift_channels_group.add_argument("--min-drift-channels", default="96", help=min_drift_channels_help)
-
-raise_if_fails_group = parser.add_mutually_exclusive_group()
-raise_if_fails_help = "Whether to raise an error in case of failure or continue. Default True (raise)"
-raise_if_fails_group.add_argument("--raise-if-fails", action="store_true", help=raise_if_fails_help)
-raise_if_fails_group.add_argument("static_raise_if_fails", nargs="?", default="true", help=raise_if_fails_help)
 
 n_jobs_group = parser.add_mutually_exclusive_group()
 n_jobs_help = (
@@ -70,10 +70,10 @@ params_group.add_argument("--params-str", default=None, help="Optional json stri
 if __name__ == "__main__":
     args = parser.parse_args()
 
+    RAISE_IF_FAILS = True if args.static_raise_if_fails and args.static_raise_if_fails.lower() == "true" else args.raise_if_fails
     APPLY_MOTION_CORRECTION = True if args.static_apply_motion_correction and args.static_apply_motion_correction.lower() == "true" else args.apply_motion_correction
     MIN_DRIFT_CHANNELS = args.static_min_channels_for_drift or args.min_drift_channels
     MIN_DRIFT_CHANNELS = int(MIN_DRIFT_CHANNELS)
-    RAISE_IF_FAILS = True if args.static_raise_if_fails and args.static_raise_if_fails.lower() == "true" else args.raise_if_fails
     N_JOBS = args.static_n_jobs or args.n_jobs
     N_JOBS = int(N_JOBS) if not N_JOBS.startswith("0.") else float(N_JOBS)
     PARAMS_FILE = args.static_params_file or args.params_file
@@ -104,9 +104,9 @@ if __name__ == "__main__":
     ####### SPIKESORTING ########
     print(f"\n\nSPIKE SORTING WITH {SORTER_NAME.upper()}\n")
 
+    print(f"\tRAISE_IF_FAILS: {RAISE_IF_FAILS}")
     print(f"\tAPPLY_MOTION_CORRECTION: {APPLY_MOTION_CORRECTION}")
     print(f"\tMIN_DRIFT_CHANNELS: {MIN_DRIFT_CHANNELS}")
-    print(f"\tRAISE_IF_FAILS: {RAISE_IF_FAILS}")
     print(f"\tN_JOBS: {N_JOBS}")
 
     sorting_params = None
