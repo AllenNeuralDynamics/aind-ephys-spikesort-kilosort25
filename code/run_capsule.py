@@ -5,6 +5,7 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 # GENERAL IMPORTS
 import os
+import sys
 import argparse
 import numpy as np
 from pathlib import Path
@@ -106,11 +107,11 @@ if __name__ == "__main__":
     if HAVE_AIND_LOG_UTILS:
         log.setup_logging(
             "Curate Ecephys",
-            mouse_id=subject_id,
-            session_name=session_name,
+            subject_id=subject_id,
+            asset_name=session_name,
         )
     else:
-        logging.basicConfig(level=logging.INFO, format="%(message)s")
+        logging.basicConfig(level=logging.INFO, stream=sys.stdout, format="%(message)s")
 
 
     if PARAMS_FILE is not None:
