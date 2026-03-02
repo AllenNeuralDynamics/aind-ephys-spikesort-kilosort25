@@ -1,6 +1,6 @@
-# hash:sha256:303335bae4f4d7437ebf793af4b0ed2721f6ff60a57e781a60d9b8b9af1c3568
+# hash:sha256:b564b89084238a38ce4f7cf9c909d6781a291894a666f0bc6b2b1d5596bc77b4
 ARG REGISTRY_HOST
-FROM $REGISTRY_HOST/codeocean/kilosort2_5-compiled-base:0.2.0
+FROM $REGISTRY_HOST/codeocean/kilosort2_5-compiled-base:2.5.2_cuda-11.2.2
 
 ARG DEBIAN_FRONTEND=noninteractive
 ARG GIT_ASKPASS
