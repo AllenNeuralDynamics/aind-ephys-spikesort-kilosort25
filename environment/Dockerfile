@@ -7,14 +7,13 @@ ARG GIT_ASKPASS
 ARG GIT_ACCESS_TOKEN
 COPY git-askpass /
 
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        nvidia-cuda-toolkit=9.1.85-3ubuntu1 \
-        nvidia-driver-510=510.108.03-0ubuntu0.18.04.1 \
-    && rm -rf /var/lib/apt/lists/*
+RUN conda install -y \
+        jupyterlab==4.2.5 \
+    && conda clean -ya
 
 RUN pip install -U --no-cache-dir \
-    aind-data-schema==0.13.50
+    aind-data-schema==1.0.0 \
+    spikeinterface[full]==0.101.1
 
 COPY postInstall /
 RUN /postInstall
