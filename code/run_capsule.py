@@ -68,7 +68,7 @@ n_jobs_group.add_argument("--n-jobs", default="-1", help=n_jobs_help)
 parser.add_argument("--params", default=None, help="Path to the parameters file or JSON string. If given, it will override all other arguments.")
 
 
-def main() -> None:
+def run() -> None:
     args = parser.parse_args()
 
     PARAMS = args.params
