@@ -21,41 +21,7 @@ the `data/preprocessed_{recording_name}` folder.
 
 Parameters are read from a `params.json` file that must be in the root folder of the capsule (next to `code/`, i.e. `../params.json` from `code/`), using the `spikesorting.kilosort25` section (`skip_motion_correction`, `min_drift_channels`, `raise_if_fails`, `n_jobs`, `job_kwargs`, `sorter`, ...) and the optional top-level `logging` section.
 
-A list of spike sorting parameters can be found in the `code/params.json`:
-
-```json
-{
-    "job_kwargs": {
-        "chunk_duration": "1s",
-        "progress_bar": false
-    },
-    "sorter": {
-        "detect_threshold": 6,
-        "projection_threshold": [10, 4],
-        "preclust_threshold": 8,
-        "car": true,
-        "minFR": 0.1,
-        "minfr_goodchannels": 0.1,
-        "nblocks": 5,
-        "sig": 20,
-        "freq_min": 150,
-        "sigmaMask": 30,
-        "nPCs": 3,
-        "ntbuff": 64,
-        "nfilt_factor": 4,
-        "NT": null,
-        "AUCsplit": 0.9,
-        "do_correction": true,
-        "wave_length": 61,
-        "keep_good_only": false,
-        "skip_kilosort_preprocessing": false,
-        "scaleproc": null,
-        "save_rez_to_mat": false,
-        "delete_tmp_files": ["matlab_files"],
-        "delete_recording_dat": false
-    }
-}
-```
+A full list of parameters can be found in the  `aind-ephys-pipeline` repository, and are defined in this [schema](https://github.com/AllenNeuralDynamics/aind-ephys-pipeline/blob/1.5.0/pipeline/default_params_schema.json).
 
 ### Output
 
